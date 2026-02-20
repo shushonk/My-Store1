@@ -3,51 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My E-commerce Store</title>
+  <title>My Shopify-Style Store</title>
   <style>
-    /* ====== Styles ====== */
+    /* ===== Global Styles ===== */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
+      background: #f9f9f9;
     }
+
     header {
-      background-color: #4CAF50;
+      background: #1b5e20;
       color: white;
-      padding: 1rem;
+      padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
+    header h1 {
+      margin: 0;
+    }
+
     nav a {
       color: white;
-      margin-left: 1rem;
+      margin-left: 1.5rem;
       text-decoration: none;
+      font-weight: bold;
     }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
     main {
       padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
     }
+
+    /* ===== Product Grid ===== */
     .products, .cart-items, .product-detail {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
     }
+
     .product, .cart-item, .product-detail {
-      border: 1px solid #ccc;
+      background: white;
+      border-radius: 10px;
       padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       text-align: center;
     }
+
+    .product img, .product-detail img, .cart-item img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .product h3, .cart-item h3, .product-detail h2 {
+      margin: 0.5rem 0;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #1b5e20;
+      margin: 0.5rem 0;
+    }
+
     button {
-      background-color: #4CAF50;
+      background: #1b5e20;
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 5px;
       cursor: pointer;
+      font-size: 0.95rem;
     }
+
     button:hover {
-      background-color: #45a049;
+      background: #2e7d32;
     }
+
     .hidden { display: none; }
+
+    #checkout-btn {
+      margin-top: 1rem;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -72,14 +118,14 @@
   </main>
 
   <script>
-    // ====== Data ======
+    // ===== Sample Products =====
     const products = [
-      { id: 1, name: "T-Shirt", price: 20, description: "Comfortable cotton t-shirt." },
-      { id: 2, name: "Sneakers", price: 50, description: "Stylish running sneakers." },
-      { id: 3, name: "Hat", price: 15, description: "Cool summer hat." }
+      { id: 1, name: "T-Shirt", price: 20, description: "Comfortable cotton t-shirt.", image: "https://via.placeholder.com/300x300?text=T-Shirt" },
+      { id: 2, name: "Sneakers", price: 50, description: "Stylish running sneakers.", image: "https://via.placeholder.com/300x300?text=Sneakers" },
+      { id: 3, name: "Hat", price: 15, description: "Cool summer hat.", image: "https://via.placeholder.com/300x300?text=Hat" }
     ];
 
-    // ====== Cart Functions ======
+    // ===== Cart Functions =====
     function getCart() {
       return JSON.parse(localStorage.getItem("cart")) || [];
     }
@@ -90,39 +136,51 @@
       document.getElementById("cart-count").textContent = getCart().length;
     }
 
-    // ====== Render Home ======
+    // ===== Hide All Sections =====
+    function hideAllSections() {
+      document.getElementById("product-list").classList.add("hidden");
+      document.getElementById("product-detail").classList.add("hidden");
+      document.getElementById("cart-items").classList.add("hidden");
+      document.getElementById("checkout-btn").classList.add("hidden");
+    }
+
+    // ===== Render Home / Products =====
     function renderHome() {
       hideAllSections();
       const productList = document.getElementById("product-list");
       productList.classList.remove("hidden");
       productList.innerHTML = "";
+
       products.forEach(product => {
         const el = document.createElement("div");
         el.classList.add("product");
         el.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
           <h3>${product.name}</h3>
-          <p>Price: $${product.price}</p>
+          <p class="price">$${product.price}</p>
           <button onclick="viewProduct(${product.id})">View</button>
         `;
         productList.appendChild(el);
       });
     }
 
-    // ====== Render Product Detail ======
+    // ===== Product Detail Page =====
     function viewProduct(id) {
       hideAllSections();
       const detailSection = document.getElementById("product-detail");
       detailSection.classList.remove("hidden");
       const product = products.find(p => p.id === id);
+
       detailSection.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
         <h2>${product.name}</h2>
         <p>${product.description}</p>
-        <p>Price: $${product.price}</p>
+        <p class="price">$${product.price}</p>
         <button onclick="addToCart(${product.id})">Add to Cart</button>
       `;
     }
 
-    // ====== Add to Cart ======
+    // ===== Add to Cart =====
     function addToCart(id) {
       const cart = getCart();
       const product = products.find(p => p.id === id);
@@ -133,7 +191,7 @@
       renderHome();
     }
 
-    // ====== Render Cart ======
+    // ===== Render Cart =====
     function renderCart() {
       hideAllSections();
       const cartSection = document.getElementById("cart-items");
@@ -144,7 +202,7 @@
       const cart = getCart();
       cartSection.innerHTML = "";
 
-      if (cart.length === 0) {
+      if(cart.length === 0) {
         cartSection.innerHTML = "<p>Your cart is empty.</p>";
         checkoutBtn.classList.add("hidden");
         return;
@@ -154,8 +212,9 @@
         const el = document.createElement("div");
         el.classList.add("cart-item");
         el.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
           <h3>${item.name}</h3>
-          <p>Price: $${item.price}</p>
+          <p class="price">$${item.price}</p>
           <button onclick="removeFromCart(${index})">Remove</button>
         `;
         cartSection.appendChild(el);
@@ -170,7 +229,7 @@
       renderCart();
     }
 
-    // ====== Checkout ======
+    // ===== Checkout =====
     document.getElementById("checkout-btn").addEventListener("click", () => {
       alert("Checkout successful! Thank you for your purchase.");
       localStorage.removeItem("cart");
@@ -178,18 +237,11 @@
       renderHome();
     });
 
-    // ====== Navigation ======
+    // ===== Navigation =====
     document.getElementById("nav-home").addEventListener("click", renderHome);
     document.getElementById("nav-cart").addEventListener("click", renderCart);
 
-    function hideAllSections() {
-      document.getElementById("product-list").classList.add("hidden");
-      document.getElementById("product-detail").classList.add("hidden");
-      document.getElementById("cart-items").classList.add("hidden");
-      document.getElementById("checkout-btn").classList.add("hidden");
-    }
-
-    // ====== Initial Load ======
+    // ===== Initial Load =====
     updateCartCount();
     renderHome();
   </script>
