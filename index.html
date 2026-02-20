@@ -3,246 +3,684 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Shopify-Style Store</title>
+  <title>Premium Store - All Features</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* ===== Global Styles ===== */
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
+    /* ===== Global ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Roboto', sans-serif; background: #f4f4f9; color: #333; }
+
+    /* ===== Header ===== */
+    header { background: #1a73e8; color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; }
+    header h1 { font-weight: 700; font-size: 1.8rem; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+    .nav-links a { color: white; font-weight: 500; text-decoration: none; transition: 0.3s; }
+    .nav-links a:hover { color: #ffd700; }
+    .search-box { display: flex; align-items: center; }
+    .search-box input { padding: 0.5rem 1rem; border-radius: 25px 0 0 25px; border: none; width: 250px; font-size: 0.9rem; }
+    .search-box button { background: #ffd700; border: none; padding: 0.5rem 1rem; border-radius: 0 25px 25px 0; cursor: pointer; color: #333; }
+    .search-box button:hover { background: #ffed4a; }
+
+    /* ===== Hero Section ===== */
+    .hero { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600') center/cover no-repeat; color: white; padding: 5rem 2rem; text-align: center; }
+    .hero h2 { font-size: 2.8rem; margin-bottom: 1rem; animation: fadeInUp 1s; }
+    .hero p { font-size: 1.3rem; animation: fadeInUp 1s 0.2s both; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    header {
-      background: #1b5e20;
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    main { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
 
-    header h1 {
-      margin: 0;
-    }
-
-    nav a {
-      color: white;
-      margin-left: 1.5rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    main {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
-    }
+    /* ===== Filter & Sort Bar ===== */
+    .filter-bar { background: white; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .category-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .category-btn { padding: 0.5rem 1rem; border: 2px solid #1a73e8; background: transparent; color: #1a73e8; border-radius: 25px; cursor: pointer; font-weight: 500; transition: 0.3s; }
+    .category-btn:hover, .category-btn.active { background: #1a73e8; color: white; }
+    .sort-select { padding: 0.5rem 1rem; border: 2px solid #ddd; border-radius: 25px; font-size: 0.9rem; cursor: pointer; }
 
     /* ===== Product Grid ===== */
-    .products, .cart-items, .product-detail {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .product, .cart-item, .product-detail {
-      background: white;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .product img, .product-detail img, .cart-item img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
-
-    .product h3, .cart-item h3, .product-detail h2 {
-      margin: 0.5rem 0;
-    }
-
-    .price {
-      font-weight: bold;
-      color: #1b5e20;
-      margin: 0.5rem 0;
-    }
-
-    button {
-      background: #1b5e20;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-
-    button:hover {
-      background: #2e7d32;
-    }
-
+    .products, .cart-items, .product-detail, .wishlist-items, .related-products { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 2rem; }
+    .product, .cart-item, .wishlist-item { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s; position: relative; }
+    .product:hover { transform: translateY(-10px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+    .product img, .cart-item img, .wishlist-item img, .product-detail img { width: 100%; height: 280px; object-fit: cover; transition: transform 0.5s; }
+    .product:hover img { transform: scale(1.05); }
+    .product h3 { margin: 1rem 0 0.5rem; font-size: 1.2rem; }
+    .price { font-weight: bold; color: #1a73e8; font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .original-price { text-decoration: line-through; color: #999; font-size: 0.9rem; margin-left: 0.5rem; }
+    .rating { color: #ffc107; margin: 0.5rem 0; }
+    .rating span { color: #666; margin-left: 0.3rem; font-size: 0.9rem; }
+    button { background: #1a73e8; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 500; transition: 0.3s; margin: 0.5rem; font-size: 0.9rem; }
+    button:hover { background: #0c4ca3; transform: scale(1.05); }
+    button.secondary { background: transparent; border: 2px solid #1a73e8; color: #1a73e8; }
+    button.secondary:hover { background: #1a73e8; color: white; }
+    .wishlist-btn { position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); color: #ff4444; display: flex; align-items: center; justify-content: center; }
+    .wishlist-btn:hover { transform: scale(1.1); background: #ff4444; color: white; }
+    .wishlist-btn.active { background: #ff4444; color: white; }
     .hidden { display: none; }
+    #checkout-btn { margin-top: 1rem; width: 100%; padding: 1rem; font-size: 1.1rem; }
 
-    #checkout-btn {
-      margin-top: 1rem;
-      width: 100%;
+    /* ===== Cart Summary ===== */
+    .cart-summary { background: white; padding: 1.5rem; border-radius: 15px; margin-top: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .summary-row { display: flex; justify-content: space-between; margin: 0.8rem 0; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+    .summary-row.total { font-size: 1.3rem; font-weight: bold; color: #1a73e8; border-bottom: none; }
+
+    /* ===== Quantity Controls ===== */
+    .quantity-control { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 1rem 0; }
+    .quantity-control button { padding: 0.3rem 0.8rem; margin: 0; }
+    .quantity-control span { font-size: 1.1rem; font-weight: bold; min-width: 30px; }
+
+    /* ===== Image Gallery ===== */
+    .image-gallery { display: flex; flex-direction: column; gap: 1rem; }
+    .main-image { width: 100%; height: 400px; object-fit: cover; border-radius: 15px; }
+    .thumbnail-container { display: flex; gap: 0.5rem; justify-content: center; }
+    .thumbnail { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; cursor: pointer; opacity: 0.6; transition: 0.3s; }
+    .thumbnail:hover, .thumbnail.active { opacity: 1; transform: scale(1.05); }
+
+    /* ===== Toast Notifications ===== */
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 1rem 2rem; border-radius: 10px; animation: slideIn 0.3s; z-index: 1000; }
+    .toast.success { background: #4caf50; }
+    .toast.error { background: #f44336; }
+    .toast.info { background: #2196f3; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* ===== Footer ===== */
+    footer { text-align: center; padding: 2rem; font-size: 0.9rem; color: #777; background: white; margin-top: 3rem; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      header { flex-direction: column; text-align: center; }
+      .search-box input { width: 180px; }
+      .hero h2 { font-size: 2rem; }
+      .main-image { height: 300px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>My Store</h1>
-    <nav>
-      <a href="#" id="nav-home">Home</a>
-      <a href="#" id="nav-cart">Cart (<span id="cart-count">0</span>)</a>
-    </nav>
+    <h1><i class="fas fa-store"></i> Premium Store</h1>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search products...">
+      <button id="search-btn"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="nav-links">
+      <a href="#" id="nav-home"><i class="fas fa-home"></i> Home</a>
+      <a href="#" id="nav-wishlist"><i class="fas fa-heart"></i> Wishlist (<span id="wishlist-count">0</span>)</a>
+      <a href="#" id="nav-cart"><i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)</a>
+    </div>
   </header>
 
-  <main>
-    <!-- Home / Products -->
-    <section class="products" id="product-list"></section>
+  <section class="hero">
+    <h2>Welcome to Premium Store</h2>
+    <p>Discover amazing products with the best shopping experience</p>
+  </section>
 
+  <main>
+    <!-- Filter Bar -->
+    <div class="filter-bar" id="filter-bar">
+      <div class="category-filters" id="category-filters"></div>
+      <select class="sort-select" id="sort-select">
+        <option value="default">Sort by: Featured</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="name-asc">Name: A to Z</option>
+        <option value="name-desc">Name: Z to A</option>
+        <option value="rating">Highest Rated</option>
+      </select>
+    </div>
+
+    <!-- Product List -->
+    <section class="products" id="product-list"></section>
+    
     <!-- Product Detail -->
     <section class="product-detail hidden" id="product-detail"></section>
-
+    
+    <!-- Wishlist -->
+    <section class="wishlist-items hidden" id="wishlist-items"></section>
+    
     <!-- Cart -->
     <section class="cart-items hidden" id="cart-items"></section>
-    <button id="checkout-btn" class="hidden">Checkout</button>
+    <div class="cart-summary hidden" id="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal:</span>
+        <span id="subtotal">$0</span>
+      </div>
+      <div class="summary-row">
+        <span>Tax (10%):</span>
+        <span id="tax">$0</span>
+      </div>
+      <div class="summary-row">
+        <span>Shipping:</span>
+        <span id="shipping">$5.00</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total:</span>
+        <span id="total">$0</span>
+      </div>
+    </div>
+    <button id="checkout-btn" class="hidden">Proceed to Checkout</button>
   </main>
 
+  <footer>
+    <p>&copy; 2026 Premium Store. All rights reserved. <i class="fas fa-credit-card"></i> <i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-cc-paypal"></i></p>
+  </footer>
+
   <script>
-    // ===== Sample Products =====
+    // Enhanced products with categories, ratings, and multiple images
     const products = [
-      { id: 1, name: "T-Shirt", price: 20, description: "Comfortable cotton t-shirt.", image: "https://via.placeholder.com/300x300?text=T-Shirt" },
-      { id: 2, name: "Sneakers", price: 50, description: "Stylish running sneakers.", image: "https://via.placeholder.com/300x300?text=Sneakers" },
-      { id: 3, name: "Hat", price: 15, description: "Cool summer hat.", image: "https://via.placeholder.com/300x300?text=Hat" }
+      { 
+        id:1, 
+        name:"Premium Blue T-Shirt", 
+        price:29.99, 
+        originalPrice:39.99,
+        category:"Clothing",
+        rating:4.5,
+        reviewCount:128,
+        description:"Premium quality cotton t-shirt, comfortable and stylish. Perfect for everyday wear.",
+        images:[
+          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
+          "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400",
+          "https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=400"
+        ]
+      },
+      { 
+        id:2, 
+        name:"Running Sneakers Pro", 
+        price:89.99, 
+        originalPrice:119.99,
+        category:"Footwear",
+        rating:4.8,
+        reviewCount:256,
+        description:"Professional running sneakers with advanced cushioning technology.",
+        images:[
+          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+          "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400",
+          "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400"
+        ]
+      },
+      { 
+        id:3, 
+        name:"Summer Beach Hat", 
+        price:24.99, 
+        originalPrice:34.99,
+        category:"Accessories",
+        rating:4.3,
+        reviewCount:89,
+        description:"Stylish sun hat with UPF 50+ protection. Perfect for summer days.",
+        images:[
+          "https://images.unsplash.com/photo-1514326005837-fb4791d25e03?w=400",
+          "https://images.unsplash.com/photo-1523909339688-220a29e2d9ea?w=400",
+          "https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=400"
+        ]
+      },
+      { 
+        id:4, 
+        name:"Leather Wallet", 
+        price:49.99, 
+        originalPrice:69.99,
+        category:"Accessories",
+        rating:4.6,
+        reviewCount:167,
+        description:"Genuine leather wallet with multiple card slots and RFID protection.",
+        images:[
+          "https://images.unsplash.com/photo-1627123424574-724758594e93?w=400",
+          "https://images.unsplash.com/photo-1606503825008-909a67e63c3d?w=400",
+          "https://images.unsplash.com/photo-1601924921557-45e39d0dc4c8?w=400"
+        ]
+      },
+      { 
+        id:5, 
+        name:"Polarized Sunglasses", 
+        price:59.99, 
+        originalPrice:79.99,
+        category:"Accessories",
+        rating:4.7,
+        reviewCount:203,
+        description:"Premium polarized sunglasses with UV400 protection and stylish design.",
+        images:[
+          "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400",
+          "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400",
+          "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=400"
+        ]
+      },
+      { 
+        id:6, 
+        name:"Classic Denim Jacket", 
+        price:79.99, 
+        originalPrice:99.99,
+        category:"Clothing",
+        rating:4.4,
+        reviewCount:112,
+        description:"Timeless denim jacket, perfect for any casual outfit.",
+        images:[
+          "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400",
+          "https://images.unsplash.com/photo-1556909211-3696cff7e45d?w=400",
+          "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400"
+        ]
+      }
     ];
 
-    // ===== Cart Functions =====
-    function getCart() {
-      return JSON.parse(localStorage.getItem("cart")) || [];
+    // Get unique categories
+    const categories = [...new Set(products.map(p => p.category))];
+
+    // State management
+    let currentCategory = 'all';
+    let currentSort = 'default';
+    let searchTerm = '';
+    let currentProduct = null;
+
+    // ===== Storage Functions =====
+    function getCart() { return JSON.parse(localStorage.getItem("cart")) || []; }
+    function saveCart(cart) { localStorage.setItem("cart", JSON.stringify(cart)); updateCartCount(); }
+    function getWishlist() { return JSON.parse(localStorage.getItem("wishlist")) || []; }
+    function saveWishlist(wishlist) { localStorage.setItem("wishlist", JSON.stringify(wishlist)); updateWishlistCount(); }
+    
+    function updateCartCount() { 
+      const cart = getCart();
+      const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      document.getElementById("cart-count").textContent = count; 
     }
-    function saveCart(cart) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    }
-    function updateCartCount() {
-      document.getElementById("cart-count").textContent = getCart().length;
+    
+    function updateWishlistCount() { 
+      document.getElementById("wishlist-count").textContent = getWishlist().length; 
     }
 
-    // ===== Hide All Sections =====
-    function hideAllSections() {
-      document.getElementById("product-list").classList.add("hidden");
-      document.getElementById("product-detail").classList.add("hidden");
-      document.getElementById("cart-items").classList.add("hidden");
+    // ===== Toast Notification =====
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ===== Filter and Sort Functions =====
+    function filterAndSortProducts() {
+      let filtered = products;
+
+      // Apply category filter
+      if (currentCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === currentCategory);
+      }
+
+      // Apply search filter
+      if (searchTerm) {
+        filtered = filtered.filter(p => 
+          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      // Apply sorting
+      switch(currentSort) {
+        case 'price-low':
+          filtered.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          filtered.sort((a, b) => b.price - a.price);
+          break;
+        case 'name-asc':
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-desc':
+          filtered.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case 'rating':
+          filtered.sort((a, b) => b.rating - a.rating);
+          break;
+        default:
+          // Keep original order
+          break;
+      }
+
+      return filtered;
+    }
+
+    // ===== Render Functions =====
+    function hideAllSections() { 
+      document.getElementById("product-list").classList.add("hidden"); 
+      document.getElementById("product-detail").classList.add("hidden"); 
+      document.getElementById("cart-items").classList.add("hidden"); 
+      document.getElementById("wishlist-items").classList.add("hidden");
+      document.getElementById("cart-summary").classList.add("hidden");
       document.getElementById("checkout-btn").classList.add("hidden");
+      document.getElementById("filter-bar").classList.remove("hidden");
     }
 
-    // ===== Render Home / Products =====
     function renderHome() {
       hideAllSections();
       const productList = document.getElementById("product-list");
       productList.classList.remove("hidden");
+      
+      const filteredProducts = filterAndSortProducts();
+      const wishlist = getWishlist();
+      
       productList.innerHTML = "";
-
-      products.forEach(product => {
+      filteredProducts.forEach(p => {
+        const isInWishlist = wishlist.some(item => item.id === p.id);
         const el = document.createElement("div");
         el.classList.add("product");
         el.innerHTML = `
-          <img src="${product.image}" alt="${product.name}">
-          <h3>${product.name}</h3>
-          <p class="price">$${product.price}</p>
-          <button onclick="viewProduct(${product.id})">View</button>
+          <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="toggleWishlist(${p.id})">
+            <i class="fas fa-heart"></i>
+          </button>
+          <img src="${p.images[0]}" alt="${p.name}" onclick="viewProduct(${p.id})">
+          <h3>${p.name}</h3>
+          <div class="rating">
+            ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < Math.floor(p.rating) ? '#ffc107' : '#e0e0e0'}"></i>`).join('')}
+            <span>(${p.reviewCount})</span>
+          </div>
+          <p class="price">$${p.price.toFixed(2)} <span class="original-price">$${p.originalPrice.toFixed(2)}</span></p>
+          <button onclick="viewProduct(${p.id})"><i class="fas fa-eye"></i> Quick View</button>
+          <button onclick="addToCart(${p.id})"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
         `;
         productList.appendChild(el);
       });
     }
 
-    // ===== Product Detail Page =====
     function viewProduct(id) {
       hideAllSections();
-      const detailSection = document.getElementById("product-detail");
-      detailSection.classList.remove("hidden");
-      const product = products.find(p => p.id === id);
-
-      detailSection.innerHTML = `
-        <img src="${product.image}" alt="${product.name}">
-        <h2>${product.name}</h2>
-        <p>${product.description}</p>
-        <p class="price">$${product.price}</p>
-        <button onclick="addToCart(${product.id})">Add to Cart</button>
+      const detail = document.getElementById("product-detail");
+      detail.classList.remove("hidden");
+      document.getElementById("filter-bar").classList.add("hidden");
+      
+      const p = products.find(x => x.id === id);
+      currentProduct = p;
+      const wishlist = getWishlist();
+      const isInWishlist = wishlist.some(item => item.id === p.id);
+      
+      // Get related products (same category)
+      const related = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
+      
+      detail.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div class="image-gallery">
+            <img src="${p.images[0]}" alt="${p.name}" class="main-image" id="main-image">
+            <div class="thumbnail-container">
+              ${p.images.map((img, index) => `
+                <img src="${img}" alt="Thumbnail ${index+1}" class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${img}', this)">
+              `).join('')}
+            </div>
+          </div>
+          <div>
+            <h2>${p.name}</h2>
+            <div class="rating" style="margin: 1rem 0;">
+              ${Array(5).fill(0).map((_, i) => `<i class="fas fa-star" style="color: ${i < Math.floor(p.rating) ? '#ffc107' : '#e0e0e0'}"></i>`).join('')}
+              <span>${p.rating} (${p.reviewCount} reviews)</span>
+            </div>
+            <p class="price" style="font-size: 2rem;">$${p.price.toFixed(2)} <span class="original-price">$${p.originalPrice.toFixed(2)}</span></p>
+            <p style="margin: 1.5rem 0; line-height: 1.6;">${p.description}</p>
+            <div style="display: flex; gap: 1rem;">
+              <button onclick="addToCart(${p.id})" style="flex: 2;"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+              <button class="secondary" onclick="toggleWishlist(${p.id})" style="flex: 1;">
+                <i class="fas fa-heart"></i> ${isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              </button>
+            </div>
+          </div>
+        </div>
+        ${related.length > 0 ? `
+          <div style="margin-top: 3rem;">
+            <h3>Related Products</h3>
+            <div class="related-products" style="margin-top: 1rem;">
+              ${related.map(r => `
+                <div class="product" onclick="viewProduct(${r.id})">
+                  <img src="${r.images[0]}" alt="${r.name}">
+                  <h4>${r.name}</h4>
+                  <p class="price">$${r.price.toFixed(2)}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
       `;
     }
 
-    // ===== Add to Cart =====
-    function addToCart(id) {
-      const cart = getCart();
-      const product = products.find(p => p.id === id);
-      cart.push(product);
-      saveCart(cart);
-      updateCartCount();
-      alert(`${product.name} added to cart!`);
-      renderHome();
+    function changeMainImage(src, thumbnail) {
+      document.getElementById('main-image').src = src;
+      document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+      thumbnail.classList.add('active');
     }
 
-    // ===== Render Cart =====
+    function renderWishlist() {
+      hideAllSections();
+      const wishlistSection = document.getElementById("wishlist-items");
+      wishlistSection.classList.remove("hidden");
+      document.getElementById("filter-bar").classList.add("hidden");
+      
+      const wishlist = getWishlist();
+      wishlistSection.innerHTML = "<h2>My Wishlist</h2>";
+      
+      if (wishlist.length === 0) { 
+        wishlistSection.innerHTML += "<p>Your wishlist is empty.</p>"; 
+        return; 
+      }
+      
+      const grid = document.createElement('div');
+      grid.className = 'wishlist-items';
+      
+      wishlist.forEach(item => {
+        const el = document.createElement("div");
+        el.classList.add("wishlist-item");
+        el.innerHTML = `
+          <img src="${item.images[0]}" alt="${item.name}">
+          <h3>${item.name}</h3>
+          <p class="price">$${item.price.toFixed(2)}</p>
+          <button onclick="addToCart(${item.id})"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+          <button class="secondary" onclick="removeFromWishlist(${item.id})"><i class="fas fa-trash"></i> Remove</button>
+        `;
+        grid.appendChild(el);
+      });
+      
+      wishlistSection.appendChild(grid);
+    }
+
     function renderCart() {
       hideAllSections();
       const cartSection = document.getElementById("cart-items");
       const checkoutBtn = document.getElementById("checkout-btn");
+      const cartSummary = document.getElementById("cart-summary");
+      
       cartSection.classList.remove("hidden");
       checkoutBtn.classList.remove("hidden");
-
+      cartSummary.classList.remove("hidden");
+      document.getElementById("filter-bar").classList.add("hidden");
+      
       const cart = getCart();
-      cartSection.innerHTML = "";
-
-      if(cart.length === 0) {
-        cartSection.innerHTML = "<p>Your cart is empty.</p>";
+      cartSection.innerHTML = "<h2>Shopping Cart</h2>";
+      
+      if (cart.length === 0) { 
+        cartSection.innerHTML += "<p>Your cart is empty.</p>"; 
         checkoutBtn.classList.add("hidden");
-        return;
+        cartSummary.classList.add("hidden");
+        return; 
       }
-
+      
+      const grid = document.createElement('div');
+      grid.className = 'cart-items';
+      
+      let subtotal = 0;
+      
       cart.forEach((item, index) => {
+        const quantity = item.quantity || 1;
+        const itemTotal = item.price * quantity;
+        subtotal += itemTotal;
+        
         const el = document.createElement("div");
         el.classList.add("cart-item");
         el.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
+          <img src="${item.images[0]}" alt="${item.name}">
           <h3>${item.name}</h3>
-          <p class="price">$${item.price}</p>
-          <button onclick="removeFromCart(${index})">Remove</button>
+          <p class="price">$${item.price.toFixed(2)}</p>
+          <div class="quantity-control">
+            <button onclick="updateQuantity(${index}, ${quantity - 1})">-</button>
+            <span>${quantity}</span>
+            <button onclick="updateQuantity(${index}, ${quantity + 1})">+</button>
+          </div>
+          <p>Total: $${itemTotal.toFixed(2)}</p>
+          <button class="secondary" onclick="removeFromCart(${index})"><i class="fas fa-trash"></i> Remove</button>
         `;
-        cartSection.appendChild(el);
+        grid.appendChild(el);
       });
+      
+      cartSection.appendChild(grid);
+      
+      // Update summary
+      const tax = subtotal * 0.1;
+      const shipping = subtotal > 0 ? 5 : 0;
+      const total = subtotal + tax + shipping;
+      
+      document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+      document.getElementById('shipping').textContent = `$${shipping.toFixed(2)}`;
+      document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    // ===== Action Functions =====
+    function toggleWishlist(id) {
+      const wishlist = getWishlist();
+      const p = products.find(x => x.id === id);
+      const index = wishlist.findIndex(item => item.id === id);
+      
+      if (index === -1) {
+        wishlist.push(p);
+        showToast(`${p.name} added to wishlist!`, 'success');
+      } else {
+        wishlist.splice(index, 1);
+        showToast(`${p.name} removed from wishlist!`, 'info');
+      }
+      
+      saveWishlist(wishlist);
+      
+      // Refresh current view
+      if (!document.getElementById('product-detail').classList.contains('hidden')) {
+        viewProduct(id);
+      } else if (!document.getElementById('wishlist-items').classList.contains('hidden')) {
+        renderWishlist();
+      } else {
+        renderHome();
+      }
+    }
+
+    function removeFromWishlist(id) {
+      const wishlist = getWishlist();
+      const newWishlist = wishlist.filter(item => item.id !== id);
+      saveWishlist(newWishlist);
+      showToast('Item removed from wishlist', 'info');
+      renderWishlist();
+    }
+
+    function addToCart(id) {
+      const cart = getCart();
+      const p = products.find(x => x.id === id);
+      const existingItem = cart.find(item => item.id === id);
+      
+      if (existingItem) {
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
+      } else {
+        cart.push({ ...p, quantity: 1 });
+      }
+      
+      saveCart(cart);
+      showToast(`${p.name} added to cart!`, 'success');
+      
+      if (!document.getElementById('product-detail').classList.contains('hidden')) {
+        // Stay on product detail page
+      } else {
+        renderHome();
+      }
+    }
+
+    function updateQuantity(index, newQuantity) {
+      if (newQuantity < 1) {
+        removeFromCart(index);
+        return;
+      }
+      
+      const cart = getCart();
+      cart[index].quantity = newQuantity;
+      saveCart(cart);
+      renderCart();
     }
 
     function removeFromCart(index) {
       const cart = getCart();
+      const item = cart[index];
       cart.splice(index, 1);
       saveCart(cart);
-      updateCartCount();
+      showToast(`${item.name} removed from cart`, 'info');
       renderCart();
     }
 
-    // ===== Checkout =====
+    // ===== Event Listeners =====
     document.getElementById("checkout-btn").addEventListener("click", () => {
-      alert("Checkout successful! Thank you for your purchase.");
+      if (getCart().length === 0) {
+        showToast('Your cart is empty!', 'error');
+        return;
+      }
+      showToast('Order placed successfully! Thank you for your purchase.', 'success');
       localStorage.removeItem("cart");
       updateCartCount();
       renderHome();
     });
 
-    // ===== Navigation =====
-    document.getElementById("nav-home").addEventListener("click", renderHome);
-    document.getElementById("nav-cart").addEventListener("click", renderCart);
+    document.getElementById("nav-home").addEventListener("click", (e) => {
+      e.preventDefault();
+      renderHome();
+    });
 
-    // ===== Initial Load =====
+    document.getElementById("nav-wishlist").addEventListener("click", (e) => {
+      e.preventDefault();
+      renderWishlist();
+    });
+
+    document.getElementById("nav-cart").addEventListener("click", (e) => {
+      e.preventDefault();
+      renderCart();
+    });
+
+    // Search functionality
+    document.getElementById("search-btn").addEventListener("click", () => {
+      searchTerm = document.getElementById("search-input").value;
+      renderHome();
+    });
+
+    document.getElementById("search-input").addEventListener("keyup", (e) => {
+      if (e.key === "Enter") {
+        searchTerm = e.target.value;
+        renderHome();
+      }
+    });
+
+    // Sort functionality
+    document.getElementById("sort-select").addEventListener("change", (e) => {
+      currentSort = e.target.value;
+      renderHome();
+    });
+
+    // Initialize category filters
+    function initCategoryFilters() {
+      const filterContainer = document.getElementById("category-filters");
+      filterContainer.innerHTML = `
+        <button class="category-btn active" data-category="all">All Products</button>
+        ${categories.map(cat => `<button class="category-btn" data-category="${cat}">${cat}</button>`).join('')}
+      `;
+
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.category;
+          renderHome();
+        });
+      });
+    }
+
+    // Initialize
+    initCategoryFilters();
     updateCartCount();
+    updateWishlistCount();
     renderHome();
   </script>
 </body>
